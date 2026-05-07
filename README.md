@@ -1,109 +1,365 @@
-# RLVR Project README
+# RLVR Project
 
 ## Overview
-This repository contains a research implementation of **RLVR (Reinforcement Learning with Verifiable Rewards)** for solving math problems from the GSM8K dataset. The system supports three training modes:
-- **GRADE** – differentiable proxy reward using Gumbel‑Softmax.
-- **GRPO** – exact non‑differentiable reward via verification.
-- **Hybrid** – combines both GRADE and GRPO.
 
-The core components are:
-- `analysis_script.py` – generates visualizations and statistical reports from training results.
-- `training_grade.py` – implements the training loop, data handling, proxy verifier, and policy model.
-- `main.py` – orchestrates training for each mode and runs the analysis after completion.
+This repository contains a research implementation of **RLVR (Reinforcement Learning with Verifiable Rewards)** for solving math reasoning problems from the GSM8K dataset.
 
+The project supports three training modes:
 
-# GRADE-STE for RLVR: Replacing Policy Gradients with Backpropagation for Math Reasoning
+- **GRADE** — Differentiable proxy reward using Gumbel-Softmax.
+- **GRPO** — Exact non-differentiable reward via verification.
+- **Hybrid** — Combines both GRADE and GRPO.
 
-========================================================================================
+Core components:
 
-Adapts the GRADE-STE framework from sentiment control (differentiable reward model)
-to Reinforcement Learning with Verifiable Rewards (RLVR) on GSM8K.
+- `analysis_script.py` — Generates visualizations and statistical reports from training results.
+- `training_grade.py` — Implements the training loop, proxy verifier, policy model, and RLVR pipeline.
+- `main.py` — Orchestrates training runs and post-training analysis.
 
-Key changes from the original GRADE-STE implementation:
-1. Dataset: IMDB sentiment → GSM8K math reasoning
-2. Reward: Neural sentiment classifier → Verifiable answer correctness
-3. Differentiability bridge: Train a proxy verifier (neural) that approximates
-   the binary correctness signal, enabling backpropagation through Gumbel-Softmax
-4. Hybrid training: Combine GRADE (differentiable proxy) + GRPO (exact verifier)
-5. Longer sequences: 64 tokens → 512+ tokens for chain-of-thought reasoning
-6. Answer extraction: Parse \boxed{} or "#### <number>" from generated text
+---
 
-Architecture overview:
-  ┌──────────────┐
-  │  Prompt (x)  │
-  └──────┬───────┘
-         │
-         ▼
-  ┌──────────────────────┐
-  │  Policy LLM (πθ)     │  ← Gumbel-Softmax soft generation
-  │  (LoRA fine-tuned)   │
-  └──────┬───────────────┘
-         │ soft tokens ỹ (differentiable)
-         │
-    ┌────┴────┐
-    │         │
-    ▼         ▼
- ┌────────┐ ┌─────────────────────┐
- │ Proxy  │ │ Exact Verifier      │
- │Verifier│ │ (non-differentiable)│
- │ (diff) │ │ extract_answer(ỹ)   │
- │ R̂(ỹ)  │ │   == ground_truth?  │
- └───┬────┘ └─────────┬───────────┘
-     │                │
-     │ ∇θ R̂          │ binary reward (for GRPO / logging)
-     │ (backprop)     │
-     ▼                ▼
-  GRADE loss       GRPO loss (optional hybrid)
+# GRADE-STE for RLVR
+## Replacing Policy Gradients with Backpropagation for Math Reasoning
 
+This project adapts the **GRADE-STE** framework from sentiment control to **Reinforcement Learning with Verifiable Rewards (RLVR)** on GSM8K.
 
-## Scripts
-### `analysis_script.py`
-- Loads result JSON files from `results/<mode>/` directories.
-- Provides a suite of 12 Matplotlib figures (reward, loss, KL divergence, proxy reward, trust factor, temperature schedule, gradient analysis, test accuracy, running accuracy, combined dashboard, GRPO‑specific metrics, hybrid decomposition).
-- Generates a statistical analysis report (`statistical_analysis.txt`).
-- Utilises helper functions for smoothing, answer extraction, and plotting aesthetics.
+## Key Changes from the Original GRADE-STE Implementation
 
-### `training_grade.py`
-- Defines configuration dataclass `RLVRConfig` with model, LoRA, training, and RLVR hyper‑parameters.
-- Manages device allocation via `DeviceManager` singleton (policy, reference, proxy devices).
-- Handles GSM8K dataset loading, splits for proxy training, policy training, validation, and testing.
-- Implements differentiable generator using Gumbel‑Softmax top‑k and gradient checkpointing.
-- Provides `ProxyVerifier` model that approximates the exact binary reward for GRADE training.
-- Includes functions to generate proxy training data, train the proxy verifier, and compute rewards.
-- Contains the main training loop (`training_main`) that performs policy updates, proxy updates, evaluation, early‑stopping checks, and checkpoint saving.
+1. **Dataset**
+   - IMDB sentiment → GSM8K math reasoning
 
-### `main.py`
-- Sets output directory and evaluation interval.
-- Configures CUDA memory stability settings.
-- Defines `cleanup_between_modes` to reset CUDA state and device manager after each training run.
-- Runs training for `grade_only` and `grpo_only` modes sequentially, handling exceptions.
-- After successful runs, invokes `analysis_main` from `analysis_script.py` to produce figures and reports.
+2. **Reward**
+   - Neural sentiment classifier → Verifiable answer correctness
 
-## Requirements
-- Python 3.10+ (tested on Windows).
-- PyTorch with CUDA support.
-- `transformers`, `datasets`, `peft`, `numpy`, `scipy`, `matplotlib`, `tqdm`, `wandb` (disabled by default).
+3. **Differentiability Bridge**
+   - Train a proxy verifier that approximates the binary correctness signal
+   - Enables backpropagation through Gumbel-Softmax
 
-Install dependencies via:
-```bash
-pip install torch transformers datasets peft tqdm numpy scipy matplotlib tqdm
+4. **Hybrid Training**
+   - Combines:
+     - GRADE (differentiable proxy)
+     - GRPO (exact verifier)
+
+5. **Longer Sequence Generation**
+   - 64 tokens → 512+ tokens for chain-of-thought reasoning
+
+6. **Answer Extraction**
+   - Parses:
+     - `\boxed{...}`
+     - `#### <number>`
+
+---
+
+# Architecture Overview
+
+```text
+┌──────────────┐
+│  Prompt (x)  │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────────────┐
+│  Policy LLM (πθ)     │
+│  (LoRA fine-tuned)   │
+└──────┬───────────────┘
+       │
+       │ soft tokens ỹ (differentiable)
+       ▼
+   ┌────┴────┐
+   │         │
+   ▼         ▼
+┌────────┐ ┌─────────────────────┐
+│ Proxy  │ │ Exact Verifier      │
+│Verifier│ │ (non-differentiable)│
+│ (diff) │ │ extract_answer(ỹ)   │
+│  R̂(ỹ) │ │ == ground_truth?    │
+└───┬────┘ └─────────┬───────────┘
+    │                │
+    │ ∇θ R̂          │ binary reward
+    │ (backprop)     │ (GRPO / logging)
+    ▼                ▼
+GRADE loss       GRPO loss
+(optional hybrid training)
 ```
 
-## Usage
-1. **Prepare data** – place the GSM8K Arrow dataset at the path configured in `RLVRConfig.local_dataset_path`.
-2. **Run training** – execute:
+---
+
+# Repository Structure
+
+## `analysis_script.py`
+
+Generates visualizations and statistical reports from training outputs.
+
+### Features
+
+- Loads result JSON files from:
+  - `results/<mode>/`
+- Produces:
+  - Reward curves
+  - Loss curves
+  - KL divergence plots
+  - Proxy reward analysis
+  - Trust factor plots
+  - Temperature schedules
+  - Gradient analysis
+  - Test accuracy curves
+  - Running accuracy
+  - Combined dashboards
+  - GRPO-specific metrics
+  - Hybrid decomposition plots
+- Generates:
+  - `statistical_analysis.txt`
+
+### Output
+
+Saved under:
+
+```text
+results/figures/
+```
+
+---
+
+## `training_grade.py`
+
+Implements the full RLVR training pipeline.
+
+### Main Components
+
+#### `RLVRConfig`
+Configuration dataclass containing:
+
+- Model settings
+- LoRA configuration
+- Training hyperparameters
+- RLVR parameters
+
+#### `DeviceManager`
+Singleton for device allocation:
+
+- Policy model device
+- Reference model device
+- Proxy verifier device
+
+#### Dataset Pipeline
+
+Handles:
+
+- GSM8K loading
+- Proxy training split
+- Policy training split
+- Validation split
+- Test split
+
+#### Differentiable Generation
+
+Implements:
+
+- Gumbel-Softmax top-k sampling
+- Gradient checkpointing
+
+#### `ProxyVerifier`
+
+A neural verifier trained to approximate the exact binary reward.
+
+#### Training Utilities
+
+Includes:
+
+- Proxy training data generation
+- Reward computation
+- Proxy verifier training
+- Evaluation utilities
+- Checkpointing
+
+#### Main Training Loop
+
+`training_main`
+
+Supports:
+
+- GRADE training
+- GRPO training
+- Hybrid optimization
+- Policy updates
+- Proxy updates
+- Early stopping
+- Evaluation
+- Automatic checkpoint saving
+
+---
+
+## `main.py`
+
+Main orchestration script.
+
+### Responsibilities
+
+- Sets output directories
+- Configures CUDA memory stability
+- Sequentially runs:
+  - `grade_only`
+  - `grpo_only`
+- Handles cleanup between runs
+- Launches analysis after training
+
+### CUDA Stability Features
+
+Uses:
+
+```python
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+```
+
+to reduce fragmentation-induced CUDA OOM issues.
+
+---
+
+# Requirements
+
+- Python 3.10+
+- CUDA-enabled PyTorch
+
+## Python Packages
+
+- `torch`
+- `transformers`
+- `datasets`
+- `peft`
+- `numpy`
+- `scipy`
+- `matplotlib`
+- `tqdm`
+- `wandb` *(optional)*
+
+---
+
+# Installation
+
+```bash
+pip install torch transformers datasets peft tqdm numpy scipy matplotlib
+```
+
+---
+
+# Usage
+
+## 1. Prepare the Dataset
+
+Place the GSM8K Arrow dataset at the location specified in:
+
+```python
+RLVRConfig.local_dataset_path
+```
+
+---
+
+## 2. Run Training
+
 ```bash
 python main.py
 ```
-   This will train GRADE and GRPO modes sequentially, saving results under `./results`.
-3. **Analyze results** – after training completes (or if you only want analysis), run:
+
+This sequentially trains:
+
+- GRADE
+- GRPO
+
+Results are stored in:
+
+```text
+./results
+```
+
+---
+
+## 3. Run Analysis Separately
+
 ```bash
 python analysis_script.py --results_dir ./results
 ```
-   Figures are saved to `results/figures` and a textual report to `results/figures/statistical_analysis.txt`.
 
-## Notes
-- The code includes extensive safety checks for CUDA health, early‑stopping based on KL collapse and extraction rate, and automatic proxy verifier re‑training.
-- Adjust hyper‑parameters in `RLVRConfig` as needed for different hardware or dataset sizes.
-- `wandb` logging is disabled; enable by setting `WANDB_MODE` environment variable.
+Generated outputs:
 
+- Figures → `results/figures`
+- Statistical report → `results/figures/statistical_analysis.txt`
+
+---
+
+# Training Modes
+
+| Mode | Description |
+|---|---|
+| `grade_only` | Differentiable reward optimization using proxy verifier |
+| `grpo_only` | Exact RLVR optimization using binary verification |
+| `hybrid` | Combines proxy gradients with exact verifier rewards |
+
+---
+
+# Safety and Stability Features
+
+The codebase includes:
+
+- CUDA health monitoring
+- Automatic memory cleanup
+- Early stopping based on:
+  - KL collapse
+  - Extraction rate degradation
+- Automatic proxy verifier retraining
+- Gradient checkpointing
+- Trust-factor scheduling
+
+---
+
+# Logging
+
+`wandb` logging is disabled by default.
+
+To enable:
+
+```bash
+export WANDB_MODE=online
+```
+
+or on Windows:
+
+```powershell
+set WANDB_MODE=online
+```
+
+---
+
+# Output Structure
+
+```text
+results/
+├── grade_only/
+├── grpo_only/
+├── hybrid/
+└── figures/
+    ├── *.png
+    └── statistical_analysis.txt
+```
+
+---
+
+# Research Focus
+
+This project investigates whether:
+
+- policy-gradient RL can be partially replaced by
+- differentiable proxy optimization
+
+for:
+
+- long-horizon reasoning
+- chain-of-thought generation
+- verifiable mathematical rewards
+
+using:
+
+- Gumbel-Softmax relaxation
+- proxy reward modeling
+- hybrid RL optimization.
+
+---
