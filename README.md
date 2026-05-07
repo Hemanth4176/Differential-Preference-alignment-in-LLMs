@@ -1,4 +1,4 @@
-# RLVR for GRADE
+# RLVR Project README
 
 ## Overview
 This repository contains a research implementation of **RLVR (Reinforcement Learning with Verifiable Rewards)** for solving math problems from the GSM8K dataset. The system supports three training modes:
@@ -10,6 +10,51 @@ The core components are:
 - `analysis_script.py` – generates visualizations and statistical reports from training results.
 - `training_grade.py` – implements the training loop, data handling, proxy verifier, and policy model.
 - `main.py` – orchestrates training for each mode and runs the analysis after completion.
+
+
+# GRADE-STE for RLVR: Replacing Policy Gradients with Backpropagation for Math Reasoning
+
+========================================================================================
+
+Adapts the GRADE-STE framework from sentiment control (differentiable reward model)
+to Reinforcement Learning with Verifiable Rewards (RLVR) on GSM8K.
+
+Key changes from the original GRADE-STE implementation:
+1. Dataset: IMDB sentiment → GSM8K math reasoning
+2. Reward: Neural sentiment classifier → Verifiable answer correctness
+3. Differentiability bridge: Train a proxy verifier (neural) that approximates
+   the binary correctness signal, enabling backpropagation through Gumbel-Softmax
+4. Hybrid training: Combine GRADE (differentiable proxy) + GRPO (exact verifier)
+5. Longer sequences: 64 tokens → 512+ tokens for chain-of-thought reasoning
+6. Answer extraction: Parse \boxed{} or "#### <number>" from generated text
+
+Architecture overview:
+  ┌──────────────┐
+  │  Prompt (x)  │
+  └──────┬───────┘
+         │
+         ▼
+  ┌──────────────────────┐
+  │  Policy LLM (πθ)     │  ← Gumbel-Softmax soft generation
+  │  (LoRA fine-tuned)   │
+  └──────┬───────────────┘
+         │ soft tokens ỹ (differentiable)
+         │
+    ┌────┴────┐
+    │         │
+    ▼         ▼
+ ┌────────┐ ┌─────────────────────┐
+ │ Proxy  │ │ Exact Verifier      │
+ │Verifier│ │ (non-differentiable)│
+ │ (diff) │ │ extract_answer(ỹ)   │
+ │ R̂(ỹ)  │ │   == ground_truth?  │
+ └───┬────┘ └─────────┬───────────┘
+     │                │
+     │ ∇θ R̂          │ binary reward (for GRPO / logging)
+     │ (backprop)     │
+     ▼                ▼
+  GRADE loss       GRPO loss (optional hybrid)
+
 
 ## Scripts
 ### `analysis_script.py`
