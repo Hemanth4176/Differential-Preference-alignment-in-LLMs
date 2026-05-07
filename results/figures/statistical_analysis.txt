@@ -1,0 +1,27 @@
+============================================================
+STATISTICAL ANALYSIS REPORT
+============================================================
+
+## Test Performance
+  GRADE: 69.8% (279.0/400)
+  GRPO: 62.5% (250.0/400)
+  Hybrid: 61.0% (244.0/400)
+
+## Training Statistics (last 20% of steps)
+  GRADE: mean=0.600, std=0.490, steps=100
+  GRPO: mean=0.625, std=0.331, steps=100
+  Hybrid: mean=0.100, std=0.300, steps=100
+
+## Pairwise t-tests (last 20% rewards)
+  GRADE vs GRPO: t=-0.184, p=0.8547 
+  GRADE vs Hybrid: t=3.794, p=0.0005 ***
+  GRPO vs Hybrid: t=5.125, p=0.0000 ***
+
+## Gradient Statistics
+  GRADE: norm_mean=0.0532, norm_std=0.0687
+  Hybrid: norm_mean=0.0470, norm_std=0.0615
+
+## KL Divergence Statistics
+  GRADE: mean=17.403, max=23.197, min=12.098
+  GRPO: mean=-0.001, max=0.004, min=-0.006
+  Hybrid: mean=17.777, max=22.821, min=13.744

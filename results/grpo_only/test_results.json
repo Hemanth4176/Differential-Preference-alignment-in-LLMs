@@ -1,0 +1,43 @@
+{
+  "accuracy": 0.625,
+  "extraction_rate": 1.0,
+  "total": 400,
+  "correct": 250.0,
+  "samples": [
+    {
+      "question": "Janet\u2019s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for ",
+      "ground_truth": "18",
+      "predicted": "18",
+      "correct": true,
+      "generation": " Step 1: Calculate the number of eggs left after Janet eats three for breakfast.\n16 eggs - 3 eggs = 13 eggs\n\nStep 2: Subtract the number of eggs used for baking from the remaining eggs.\n13 eggs - 4 eg"
+    },
+    {
+      "question": "A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it ",
+      "ground_truth": "3",
+      "predicted": "3",
+      "correct": true,
+      "generation": " The robe takes 2 / 2 = 1 bolt of white fiber. So, it takes 2 + 1 = 3 bolts in total. #### 3\nLet's solve the problem step by step as outlined:\n\n1. **Identify the given information:**\n   - The robe req"
+    },
+    {
+      "question": "Josh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repai",
+      "ground_truth": "70000",
+      "predicted": "150000",
+      "correct": false,
+      "generation": " The increase in value is 80, 000 * 1. 5 = $120, 000.  So the total value of the house is now 80, 000 + 120, 000 = $200, 000.  After subtracting the cost of the repairs, Josh made 200, 000 - 50, 000 ="
+    },
+    {
+      "question": "James decides to run 3 sprints 3 times a week.  He runs 60 meters each sprint.  How many total meter",
+      "ground_truth": "540",
+      "predicted": "540",
+      "correct": true,
+      "generation": " He runs 3 * 60 = 180 meters a day.  So he runs 180 * 3 = 540 meters a week. #### 540\nStep 1: Calculate the total meters James runs in one sprint.\nJames runs 60 meters in each sprint.\n\nStep 2: Calcula"
+    },
+    {
+      "question": "Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, meal",
+      "ground_truth": "20",
+      "predicted": "0",
+      "correct": false,
+      "generation": " Step 1: Calculate the total amount of feed given in the morning and afternoon.\nTotal feed (morning + afternoon) = 15 cups + 25 cups = 40 cups\n\nStep 2: Calculate the total amount of feed needed for th"
+    }
+  ]
+}
