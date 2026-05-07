@@ -1,4 +1,4 @@
-# RLVR Project README
+# RLVR for GRADE
 
 ## Overview
 This repository contains a research implementation of **RLVR (Reinforcement Learning with Verifiable Rewards)** for solving math problems from the GSM8K dataset. The system supports three training modes:
