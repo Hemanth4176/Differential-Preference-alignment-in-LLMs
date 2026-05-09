@@ -1,0 +1,43 @@
+{
+  "accuracy": 0.6625,
+  "extraction_rate": 1.0,
+  "total": 400,
+  "correct": 265.0,
+  "samples": [
+    {
+      "question": "Janet\u2019s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for ",
+      "ground_truth": "18",
+      "predicted": "18",
+      "correct": true,
+      "generation": " She has 16 - 3 - 4 = 9 eggs left to sell . She makes 9 * 2 = $18 at the farmers market . #### 18\nStep 1:  Janet's ducks lay 16 eggs per day.\nStep 2:  She eats 3 eggs for breakfast, leaving 16 - 3 = 1"
+    },
+    {
+      "question": "A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it ",
+      "ground_truth": "3",
+      "predicted": "3",
+      "correct": true,
+      "generation": " The robe takes 2 / 2 = 1 bolt of white fiber . It takes 2 + 1 = 3 bolts in total . #### 3\nStep 1:  The robe takes 2 bolts of blue fiber.\nStep 2:  The robe takes half as much white fiber as blue fiber"
+    },
+    {
+      "question": "Josh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repai",
+      "ground_truth": "70000",
+      "predicted": "69000",
+      "correct": false,
+      "generation": " The house was worth 80,000 + 50,000 = 130,000. 150% of 130,000 is 130,000 * .15 = 19,000. So the house is now worth 130,000 + 19,000 = 149,000. So his profit is 149,000 - 80,000 = 69,000. #### 69000\n"
+    },
+    {
+      "question": "James decides to run 3 sprints 3 times a week.  He runs 60 meters each sprint.  How many total meter",
+      "ground_truth": "540",
+      "predicted": "5",
+      "correct": false,
+      "generation": " He runs 180 meters in one week because 3 x 3 = 9 and 9 x 20 = 180 . Therefore , he runs 180 meters in a week .\n\nCheck: 3 sprints * 3 days / week = 9 sprints / week . 9 sprints / week * 60 meters / sp"
+    },
+    {
+      "question": "Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, meal",
+      "ground_truth": "20",
+      "predicted": "60",
+      "correct": false,
+      "generation": " Each chicken gets 3 cups of feed per day so 20 chickens get 60 cups of feed . In the morning and afternoon she gives 40 cups of feed so 20 chickens get 12 cups of feed in the final meal . #### 60\nSte"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "accuracy": 0.0375,
+  "extraction_rate": 1.0,
+  "total": 400,
+  "correct": 15.0,
+  "samples": [
+    {
+      "question": "Janet\u2019s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for ",
+      "ground_truth": "18",
+      "predicted": "8589",
+      "correct": false,
+      "generation": " ## 34 4 2 10 20 40 80 160 320 640 1280 2560 5120 10240 20480 40960 81920 163840 327680 655360 1310720 2621440 5242880 10485760 20971520 41943040 83886080 167772160 335544320 671088640 1342177280 2684"
+    },
+    {
+      "question": "A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it ",
+      "ground_truth": "3",
+      "predicted": "2",
+      "correct": false,
+      "generation": " 2 1 1 4 5 2 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2"
+    },
+    {
+      "question": "Josh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repai",
+      "ground_truth": "70000",
+      "predicted": "33",
+      "correct": false,
+      "generation": " 50000 200000 300000 120000 400000 500000 600000 700000 800000 900000 1000000 1100000 1200000 1300000 1400000 1500000 1600000 1700000 1800000 1900000 2000000 2100000 2200000 2300000 2400000 2500000 26"
+    },
+    {
+      "question": "James decides to run 3 sprints 3 times a week.  He runs 60 meters each sprint.  How many total meter",
+      "ground_truth": "540",
+      "predicted": "120",
+      "correct": false,
+      "generation": " 1200 4800 3 3 900 3 2700 2700 1200 1200 3 3600 3 10800 10800 1200 1200 3 3600 3 10800 10800 1200 1200 3 3600 3 10800 10800 1200 1200 3 3600 3 10800 10800 1200 1200 3 3600 3 10800 10800 1200 1200 3 36"
+    },
+    {
+      "question": "Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, meal",
+      "ground_truth": "20",
+      "predicted": "100",
+      "correct": false,
+      "generation": " 3 15 25 40 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 100 "
+    }
+  ]
+}

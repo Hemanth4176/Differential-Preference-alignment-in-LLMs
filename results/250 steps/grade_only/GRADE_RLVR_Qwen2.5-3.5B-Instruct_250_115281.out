@@ -1,0 +1,284 @@
+======================================
+Job started on: cn18-dgx
+GPUs: 0,1,2,3
+======================================
+Thu May  7 10:32:14 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.144.03             Driver Version: 550.144.03     CUDA Version: 12.4     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-SXM4-80GB          On  |   00000000:07:00.0 Off |                    0 |
+| N/A   30C    P0             65W /  400W |       1MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A100-SXM4-80GB          On  |   00000000:0F:00.0 Off |                    0 |
+| N/A   29C    P0             62W /  400W |       1MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A100-SXM4-80GB          On  |   00000000:47:00.0 Off |                    0 |
+| N/A   29C    P0             64W /  400W |       1MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A100-SXM4-80GB          On  |   00000000:4E:00.0 Off |                    0 |
+| N/A   30C    P0             62W /  400W |       1MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+============================================================
+Running GRADE vs GRPO experiment
+============================================================
+Results directory: /home/cccp/25m2118/RND2/RLVR_3.5B/results
+Evaluation interval: 100
+PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+
+Starting training for grade_only...
+Loading model: /home/cccp/25m2118/RND2/Qwen2.5-3B-Instruct
+  Tokenizer padding_side set to: 'left'
+DeviceManager: policy=cuda:0, ref=cuda:1, proxy=cuda:2 (3 GPUs)
+trainable params: 29,933,568 || all params: 3,115,872,256 || trainable%: 0.9607
+
+============================================================
+LOADING AND SPLITTING DATA (RLVR)
+============================================================
+  Proxy Verifier Training: 2989 samples (0 → 2989)
+  Policy Training:         4284 samples (2989 → 7273)
+  Validation:              200 samples (7273 → 7473)
+  Test:                    1319 samples (GSM8K test split)
+============================================================
+
+
+============================================================
+PHASE 1: Training proxy verifier
+============================================================
+Generating proxy verifier training data...
+Generated 3000 samples. Accuracy distribution: 64.3% correct
+Training proxy verifier on 3000 samples...
+Proxy verifier training complete. Final accuracy: 0.768
+
+============================================================
+PHASE 2: Policy training (grade_only)
+============================================================
+Seeding replay buffer with initial proxy data...
+Generating proxy verifier training data...
+Generated 752 samples. Accuracy distribution: 60.8% correct
+  Replay buffer seeded with 752 samples (positive rate: 60.8%)
+Step 0: loss: 4.3980 | proxy_reward: 0.0508 | proxy_reward_grounded: 0.0507 | exact_accuracy: 0.0000 | kl: 14.8290 | kl_lower_penalty: 0.0000 | degen_penalty: 0.0000 | trust_factor: 0.9975 | tau: 2.0000 | grad_norm_mean: 0.0204 | grad_norm_std: 0.0273
+Step 50: loss: 4.9126 | proxy_reward: 0.0418 | proxy_reward_grounded: 0.0218 | exact_accuracy: 0.0000 | kl: 16.4481 | kl_lower_penalty: 0.0000 | degen_penalty: 0.0000 | trust_factor: 0.5214 | tau: 1.9750 | grad_norm_mean: 0.0777 | grad_norm_std: 0.0988
+Step 100: loss: 5.0529 | proxy_reward: 0.7033 | proxy_reward_grounded: 0.2909 | exact_accuracy: 1.0000 | kl: 17.8126 | kl_lower_penalty: 0.0000 | degen_penalty: 0.0000 | trust_factor: 0.4137 | tau: 1.9500 | grad_norm_mean: 0.0451 | grad_norm_std: 0.0540
+
+--- Evaluation at step 100 ---
+  Val Accuracy:      0.8600
+  Extraction Rate:   1.0000
+  Correct/Total:     86.0/100
+  Q: John starts climbing a very steep hill.  He travels 1 foot vertically for every two feet horizontall
+  GT: 2700 | Pred: 2700. | ✓
+  Gen:  He travels 1450 - 100 = 1350 feet vertically . For every 2 feet horizontally , he travels 1 foot ve...
+
+  Q: Macy's is selling shirts that have been reduced to $6.  This price is at 25% of the original price. 
+  GT: 24 | Pred: 24 | ✓
+  Gen:  The price is 25 / 100 = .25 of the original price. So the original price is 6 / .25 = $24. #### 24
+...
+
+  New best model saved (accuracy: 0.8600)
+Step 150: loss: 4.0832 | proxy_reward: 0.3125 | proxy_reward_grounded: 0.1812 | exact_accuracy: 1.0000 | kl: 14.2144 | kl_lower_penalty: 0.0000 | degen_penalty: 0.0000 | trust_factor: 0.5797 | tau: 1.9250 | grad_norm_mean: 0.1074 | grad_norm_std: 0.1357
+Step 200: loss: 0.6758 | proxy_reward: 0.0691 | proxy_reward_grounded: 0.0570 | exact_accuracy: 0.0000 | kl: 2.4425 | kl_lower_penalty: 0.0000 | degen_penalty: 0.0000 | trust_factor: 0.8243 | tau: 1.9000 | grad_norm_mean: 0.0593 | grad_norm_std: 0.0757
+
+--- Evaluation at step 200 ---
+  Val Accuracy:      0.0200
+  Extraction Rate:   1.0000
+  Correct/Total:     2.0/100
+  Q: John starts climbing a very steep hill.  He travels 1 foot vertically for every two feet horizontall
+  GT: 2700 | Pred: 200 | ✗
+  Gen:  200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200...
+
+  Q: Macy's is selling shirts that have been reduced to $6.  This price is at 25% of the original price. 
+  GT: 24 | Pred: 2 | ✗
+  Gen:  1 60 24 24 32 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 24 2...
+
+
+============================================================
+PHASE 3: Final test evaluation
+============================================================
+
+========================================
+FINAL TEST RESULTS (grade_only)
+========================================
+  Accuracy:        0.0375
+  Extraction Rate: 1.0000
+  Correct/Total:   15.0/400
+
+Training finished for grade_only
+
+--- Cleaning up CUDA state between modes ---
+--- Cleanup complete ---
+
+
+Starting training for grpo_only...
+Loading model: /home/cccp/25m2118/RND2/Qwen2.5-3B-Instruct
+  Tokenizer padding_side set to: 'left'
+trainable params: 29,933,568 || all params: 3,115,872,256 || trainable%: 0.9607
+
+============================================================
+LOADING AND SPLITTING DATA (RLVR)
+============================================================
+  Proxy Verifier Training: 2989 samples (0 → 2989)
+  Policy Training:         4284 samples (2989 → 7273)
+  Validation:              200 samples (7273 → 7473)
+  Test:                    1319 samples (GSM8K test split)
+============================================================
+
+
+Skipping proxy verifier (GRPO mode)
+
+============================================================
+PHASE 2: Policy training (grpo_only)
+============================================================
+Step 0: loss: 0.1053 | policy_loss: 0.1053 | exact_accuracy: 0.5000 | kl: 0.0000 | advantages_mean: 0.0000 | advantages_std: 1.0000 | groups_with_signal: 1.0000 | total_groups: 1.0000
+Step 50: loss: -0.0420 | policy_loss: -0.0415 | exact_accuracy: 0.7500 | kl: -0.0018 | advantages_mean: 0.0000 | advantages_std: 1.0000 | groups_with_signal: 1.0000 | total_groups: 1.0000
+Step 100: loss: -0.0880 | policy_loss: -0.0889 | exact_accuracy: 0.5000 | kl: 0.0030 | advantages_mean: 0.0000 | advantages_std: 1.0000 | groups_with_signal: 1.0000 | total_groups: 1.0000
+
+--- Evaluation at step 100 ---
+  Val Accuracy:      0.7200
+  Extraction Rate:   1.0000
+  Correct/Total:     72.0/100
+  Q: John starts climbing a very steep hill.  He travels 1 foot vertically for every two feet horizontall
+  GT: 2700 | Pred: 2700 | ✓
+  Gen:  He travels 1450 - 100 = 1350 feet vertically.  For every 2 feet horizontally, he travels 1 foot ver...
+
+  Q: Macy's is selling shirts that have been reduced to $6.  This price is at 25% of the original price. 
+  GT: 24 | Pred: 24 | ✓
+  Gen:  The price of $6 represents 25% of the original price, or .25 * P = 6.  To solve for P, divide both ...
+
+  New best model saved (accuracy: 0.7200)
+Step 150: loss: 0.0000 | exact_accuracy: 0.0000 | kl: 0.0000 | advantages_mean: 0.0000 | groups_with_signal: 0.0000 | total_groups: 1.0000
+Step 200: loss: 0.0000 | exact_accuracy: 0.0000 | kl: 0.0000 | advantages_mean: 0.0000 | groups_with_signal: 0.0000 | total_groups: 1.0000
+
+--- Evaluation at step 200 ---
+  Val Accuracy:      0.7200
+  Extraction Rate:   1.0000
+  Correct/Total:     72.0/100
+  Q: John starts climbing a very steep hill.  He travels 1 foot vertically for every two feet horizontall
+  GT: 2700 | Pred: 2700 | ✓
+  Gen:  He travels 1450 - 100 = 1350 feet vertically.  For every 2 feet horizontally, he travels 1 foot ver...
+
+  Q: Macy's is selling shirts that have been reduced to $6.  This price is at 25% of the original price. 
+  GT: 24 | Pred: 24 | ✓
+  Gen:  The price of $6 represents 25% of the original price, or .25 * P = 6.  To solve for P, divide both ...
+
+
+============================================================
+PHASE 3: Final test evaluation
+============================================================
+
+========================================
+FINAL TEST RESULTS (grpo_only)
+========================================
+  Accuracy:        0.6375
+  Extraction Rate: 1.0000
+  Correct/Total:   255.0/400
+
+Training finished for grpo_only
+
+--- Cleaning up CUDA state between modes ---
+--- Cleanup complete ---
+
+
+Starting training for hybrid...
+Loading model: /home/cccp/25m2118/RND2/Qwen2.5-3B-Instruct
+  Tokenizer padding_side set to: 'left'
+trainable params: 29,933,568 || all params: 3,115,872,256 || trainable%: 0.9607
+
+============================================================
+LOADING AND SPLITTING DATA (RLVR)
+============================================================
+  Proxy Verifier Training: 2989 samples (0 → 2989)
+  Policy Training:         4284 samples (2989 → 7273)
+  Validation:              200 samples (7273 → 7473)
+  Test:                    1319 samples (GSM8K test split)
+============================================================
+
+
+============================================================
+PHASE 1: Training proxy verifier
+============================================================
+Generating proxy verifier training data...
+Generated 3000 samples. Accuracy distribution: 64.3% correct
+Training proxy verifier on 3000 samples...
+Proxy verifier training complete. Final accuracy: 0.768
+
+============================================================
+PHASE 2: Policy training (hybrid)
+============================================================
+Seeding replay buffer with initial proxy data...
+Generating proxy verifier training data...
+Generated 752 samples. Accuracy distribution: 60.8% correct
+  Replay buffer seeded with 752 samples (positive rate: 60.8%)
+Step 0: loss: 4.3980 | proxy_reward: 0.0508 | proxy_reward_grounded: 0.0507 | exact_accuracy: 0.0000 | kl: 14.8290 | kl_lower_penalty: 0.0000 | degen_penalty: 0.0000 | trust_factor: 0.9975 | tau: 2.0000 | grad_norm_mean: 0.0204 | grad_norm_std: 0.0273
+Step 50: loss: 5.8728 | proxy_reward: 0.2063 | proxy_reward_grounded: 0.1281 | exact_accuracy: 1.0000 | kl: 20.0031 | kl_lower_penalty: 0.0000 | degen_penalty: 0.0000 | trust_factor: 0.6208 | tau: 1.9750 | grad_norm_mean: 0.0985 | grad_norm_std: 0.1296
+Step 100: loss: 5.7709 | proxy_reward: 0.3658 | proxy_reward_grounded: 0.1540 | exact_accuracy: 1.0000 | kl: 19.7496 | kl_lower_penalty: 0.0000 | degen_penalty: 0.0000 | trust_factor: 0.4211 | tau: 1.9500 | grad_norm_mean: 0.0598 | grad_norm_std: 0.0807
+
+--- Evaluation at step 100 ---
+  Val Accuracy:      0.7000
+  Extraction Rate:   1.0000
+  Correct/Total:     70.0/100
+  Q: John starts climbing a very steep hill.  He travels 1 foot vertically for every two feet horizontall
+  GT: 2700 | Pred: 675 | ✗
+  Gen:  He travels 1450 - 100 = 1350 feet vertically.  For every 2 feet horizontally, he travels 1 foot ver...
+
+  Q: Macy's is selling shirts that have been reduced to $6.  This price is at 25% of the original price. 
+  GT: 24 | Pred: 6 | ✗
+  Gen:  The price of $6 represents 25% of the original price, or .25 * P = 6.  To solve for P, divide both ...
+
+  New best model saved (accuracy: 0.7000)
+Step 150: loss: 5.9720 | proxy_reward: 0.4438 | proxy_reward_grounded: 0.1659 | exact_accuracy: 1.0000 | kl: 20.4598 | kl_lower_penalty: 0.0000 | degen_penalty: 0.0000 | trust_factor: 0.3739 | tau: 1.9250 | grad_norm_mean: 0.0326 | grad_norm_std: 0.0409
+Step 200: loss: 4.7687 | proxy_reward: 0.3020 | proxy_reward_grounded: 0.1355 | exact_accuracy: 0.0000 | kl: 16.3471 | kl_lower_penalty: 0.0000 | degen_penalty: 0.0000 | trust_factor: 0.4486 | tau: 1.9000 | grad_norm_mean: 0.0497 | grad_norm_std: 0.0592
+
+--- Evaluation at step 200 ---
+  Val Accuracy:      0.8100
+  Extraction Rate:   1.0000
+  Correct/Total:     81.0/100
+  Q: John starts climbing a very steep hill.  He travels 1 foot vertically for every two feet horizontall
+  GT: 2700 | Pred: 675 | ✗
+  Gen:  He travels 1450 - 100 = 1350 feet vertically.  For every 2 feet horizontally, he travels 1 foot ver...
+
+  Q: Macy's is selling shirts that have been reduced to $6.  This price is at 25% of the original price. 
+  GT: 24 | Pred: 24 | ✓
+  Gen:  The price is 25 / 100 = .25 of the original price. So the original price is 6 / .25 = $24. #### 24
+...
+
+  New best model saved (accuracy: 0.8100)
+
+============================================================
+PHASE 3: Final test evaluation
+============================================================
+
+========================================
+FINAL TEST RESULTS (hybrid)
+========================================
+  Accuracy:        0.6625
+  Extraction Rate: 1.0000
+  Correct/Total:   265.0/400
+
+Training finished for hybrid
+
+--- Cleaning up CUDA state between modes ---
+--- Cleanup complete ---
+
+
+Running analysis on completed modes: ['grade_only', 'grpo_only', 'hybrid']...
+
+Analysis crashed!
+main() got an unexpected keyword argument 'eval_every'
+======================================
+Job finished
+======================================
